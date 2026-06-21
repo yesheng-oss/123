@@ -1,74 +1,131 @@
-<img width="1271" height="761" alt="image" src="https://github.com/user-attachments/assets/99ce784a-ebca-49fc-bf9b-1a0785b47ed5" />
+<img width="1271" height="761" alt="LabelMe answer-card annotation screenshot" src="https://github.com/user-attachments/assets/99ce784a-ebca-49fc-bf9b-1a0785b47ed5" />
 
-# 图片答题卡识别 Demo
+# Answer Card Detection Demo
 
-这是一个最小可运行的答题卡目标检测项目，适合把现有的 LabelMe 标注数据转换成 YOLO 数据集进行训练，并对新图片批量生成可继续在 LabelMe 中微调的 JSON 标注。
+This project is a lightweight computer vision demo for detecting answer-card question numbers and answer options. It converts LabelMe annotations into a YOLO dataset, fine-tunes a YOLO detection model, and exports prediction results back to LabelMe-compatible JSON files for manual review and correction.
 
-当前项目只做目标检测，不做 OCR、不判断正确答案，也不建立题号与选项之间的业务关系。
+## What Problem It Solves
 
-## 功能
+Manual answer-card annotation is repetitive and slow. In this project, a small object detection model is trained to automatically locate:
 
-- LabelMe JSON 转 YOLO 检测数据集
-- 训练 `th` 和 `option` 两个类别
-- 批量推理新图片
-- 导出 LabelMe 风格 JSON
-- 支持整理成 `原图 + 同名 JSON` 的 LabelMe 配对目录
+- `th`: question number area
+- `option`: answer option area
 
-## 安装依赖
+After prediction, the project generates one JSON annotation file for each original image. The output can be opened directly in LabelMe, so users only need to correct imperfect boxes instead of drawing every box from scratch.
+
+This workflow is useful for building a data annotation loop:
+
+- Label a small dataset manually
+- Fine-tune a detection model
+- Use the model to pre-label new images
+- Correct the generated labels in LabelMe
+- Re-train with better data
+
+## Technologies Used
+
+- Python: command-line training and prediction scripts
+- Ultralytics YOLO: object detection training and inference
+- PyTorch: deep learning runtime used by YOLO
+- OpenCV: image reading, drawing, and output generation
+- LabelMe JSON: annotation format for manual correction
+- YOLO dataset format: training data format for detection models
+- unittest: basic tests for annotation conversion and JSON export
+
+This is a YOLO object detection fine-tuning project, also known as transfer learning. It is not large model pretraining. The model starts from pretrained YOLO weights and is adapted to a custom answer-card detection task.
+
+## Features
+
+- Convert LabelMe rectangle annotations to YOLO labels
+- Train two detection classes: `th` and `option`
+- Run batch prediction on new images
+- Export annotated preview images
+- Export LabelMe-style JSON files
+- Support a LabelMe-friendly output structure: original image plus same-name JSON
+
+## Installation
 
 ```powershell
 python -m pip install -r requirements.txt
 ```
 
-## 训练
+## Training
 
-训练集要求是：
+The training folder should contain image files and same-name LabelMe JSON files:
 
-- 图片文件，例如 `xxx.jpg`
-- 同名 LabelMe 标注，例如 `xxx.json`
-
-运行训练：
-
-```powershell
-python train.py --source "C:\Users\22234\Desktop\kgt\训练集" --epochs 50 --imgsz 640
+```text
+dataset/
+  sample_1.jpg
+  sample_1.json
+  sample_2.jpg
+  sample_2.json
 ```
 
-训练会自动：
-
-- 生成本地 YOLO 数据集到 `datasets/answer_card_yolo`
-- 默认按 `8:2` 划分训练集和验证集
-- 输出训练结果到 `runs/detect/answer_card`
-
-如果没有 GPU，可以显式指定 CPU：
+Run training:
 
 ```powershell
-python train.py --source "C:\Users\22234\Desktop\kgt\训练集" --epochs 1 --device cpu
+python train.py --source "C:\path\to\labelme_dataset" --epochs 50 --imgsz 640
 ```
 
-## 推理
+The training script will:
 
-对新图片批量生成标注：
+- Convert LabelMe annotations to a YOLO dataset under `datasets/answer_card_yolo`
+- Split the data into train and validation sets
+- Save training results under `runs/detect/answer_card`
+
+If there is no GPU, CPU training is also supported:
+
+```powershell
+python train.py --source "C:\path\to\labelme_dataset" --epochs 1 --device cpu
+```
+
+## Prediction
+
+Run batch prediction:
 
 ```powershell
 python predict.py --weights runs/detect/answer_card/weights/best.pt --input path\to\images --output outputs
 ```
 
-输出内容：
+Output files:
 
-- `outputs/images/`：带框预览图
-- `outputs/json/`：同名 LabelMe JSON
-- `outputs/predictions.csv`：检测结果汇总
+- `outputs/images/`: preview images with detection boxes
+- `outputs/json/`: LabelMe-compatible JSON annotations
+- `outputs/predictions.csv`: summary of detected boxes
 
-如果你后续要直接用 LabelMe 微调，推荐把原始图片和导出的 JSON 放在同一个目录中，形成：
+For LabelMe correction, place each original image and its same-name JSON file in the same folder:
 
-- `xxx.jpg`
-- `xxx.json`
+```text
+labelme_pairs/
+  sample_1.jpg
+  sample_1.json
+  sample_2.jpg
+  sample_2.json
+```
 
-## 类别
+## Classes
 
 ```text
 0: th
 1: option
 ```
 
+## Repository Notes
 
+The repository is intended to store source code and project documentation only.
+
+Do not upload:
+
+- Original training images
+- Generated datasets
+- Prediction outputs
+- Training logs
+- Model weights
+
+These files are excluded in `.gitignore`:
+
+```text
+datasets/
+outputs/
+runs/
+*.pt
+```
