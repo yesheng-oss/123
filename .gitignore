@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+
+# Local datasets and generated outputs
+datasets/
+outputs/
+runs/
+
+# Model weights and large artifacts
+*.pt
+*.onnx
+*.torchscript
+
+# Environments and caches
+.venv/
+venv/
+.pytest_cache/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
