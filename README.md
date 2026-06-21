@@ -1,3 +1,5 @@
+<img width="1271" height="761" alt="image" src="https://github.com/user-attachments/assets/99ce784a-ebca-49fc-bf9b-1a0785b47ed5" />
+
 # 图片答题卡识别 Demo
 
 这是一个最小可运行的答题卡目标检测项目，适合把现有的 LabelMe 标注数据转换成 YOLO 数据集进行训练，并对新图片批量生成可继续在 LabelMe 中微调的 JSON 标注。
@@ -69,21 +71,4 @@ python predict.py --weights runs/detect/answer_card/weights/best.pt --input path
 1: option
 ```
 
-## 仓库发布建议
 
-建议上传：
-
-- 源码
-- 测试
-- README
-- requirements
-
-不要上传：
-
-- 原始训练数据
-- `datasets/`
-- `outputs/`
-- `runs/`
-- 模型权重 `*.pt`
-
-这些内容已经在 `.gitignore` 中排除。
