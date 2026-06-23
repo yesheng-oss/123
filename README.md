@@ -4,7 +4,6 @@
 ![YOLO](https://img.shields.io/badge/YOLO-Object%20Detection-green)
 ![LabelMe](https://img.shields.io/badge/LabelMe-JSON-orange)
 
-这是一个基于 YOLO 目标检测模型的答题卡自动标注项目，主要用于识别题号区域和选项区域，并自动生成可被 LabelMe 继续编辑的 JSON 标注文件。项目适合用于“先人工标少量数据，再用模型批量预标注，最后人工微调修正”的数据标注闭环。
 
 <img width="1271" height="761" alt="LabelMe answer-card annotation screenshot" src="https://github.com/user-attachments/assets/99ce784a-ebca-49fc-bf9b-1a0785b47ed5" />
 
